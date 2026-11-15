@@ -10,7 +10,8 @@ import static org.firstinspires.ftc.teamcode.RobotConfig.*;
  * <p>
  * A shot shows up as a sudden drop in launch motor RPM. The controller follows the
  * flywheel's normal speed with a slow moving average (the baseline) and treats any
- * reading more than {@code shotDropRpm} below it as a shot.
+ * reading more than {@code shotDropRpm} below it as a shot. On a shot, the feeder briefly
+ * runs backwards to pull the next ball away from the flywheel, then holds still.
  * <p>
  * A pause always ends: once the RPM has recovered, or after {@code feederPauseMaxSeconds}
  * at the latest.
@@ -40,7 +41,7 @@ public class FeederController {
 			if (armed && launchRpm < baselineRpm - shotDropRpm) {
 				shotCount++;
 				setState(State.PAUSED);
-				return 0.0;
+				return -feederReversePower;
 			}
 
 			// follow slow changes (e.g. battery sag) so only sudden dips count as shots
@@ -56,7 +57,8 @@ public class FeederController {
 			setState(State.FEEDING);
 			return 1.0;
 		}
-		return 0.0;
+		// briefly run backwards to pull the next ball away from the flywheel, then hold still
+		return elapsed < feederReverseSeconds ? -feederReversePower : 0.0;
 	}
 
 	/** Call while the feeder is off, so it starts fresh next time. */
