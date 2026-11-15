@@ -20,6 +20,12 @@ public class ToggleAction {
         previousState = currentButtonState;
     }
 
+	public void reset() {
+		active = false;
+		previousState = false;
+		actionTimer.reset();
+	}
+
     public boolean isActive() {
         return active;
     }
