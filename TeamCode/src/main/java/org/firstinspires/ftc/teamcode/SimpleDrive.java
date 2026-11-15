@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
 @TeleOp(name = "Simple Drive", group = "TeleOp")
@@ -21,6 +23,7 @@ public class SimpleDrive extends OpMode {
 
     ToggleAction launchToggle;
 	ToggleAction intakeToggle;
+	ToggleAction intakeDirToggle;
 
     @Override
     public void init() {
@@ -37,7 +40,6 @@ public class SimpleDrive extends OpMode {
         leftDrive.setDirection(DcMotor.Direction.FORWARD);
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
         launchMotor.setDirection(DcMotor.Direction.FORWARD);
-        centralIntake.setDirection(DcMotor.Direction.FORWARD);
         rightIntake.setDirection(DcMotor.Direction.REVERSE);
         leftIntake.setDirection(DcMotor.Direction.FORWARD);
         feederServo.setDirection(CRServo.Direction.REVERSE);
@@ -50,6 +52,7 @@ public class SimpleDrive extends OpMode {
 
 		launchToggle = new ToggleAction();
 		intakeToggle = new ToggleAction();
+		intakeDirToggle = new ToggleAction();
 
 		telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addData("Status", "Initialized.");
@@ -60,6 +63,7 @@ public class SimpleDrive extends OpMode {
     public void loop() {
         launchToggle.update(gamepad1.b);
 		intakeToggle.update(gamepad1.a);
+		intakeDirToggle.update(gamepad1.y);
 
         double drive = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
@@ -88,11 +92,22 @@ public class SimpleDrive extends OpMode {
             feederServo.setPower(0.0);
         }
 
-		if(intakeToggle.isActive()) {
+		if (intakeToggle.isActive()) {
 			centralIntake.setPower(1.0);
 			rightIntake.setPower(1.0);
 			leftIntake.setPower(1.0);
+
+			if (intakeDirToggle.isActive()) {
+				centralIntake.setDirection(DcMotor.Direction.REVERSE);
+			} else {
+				centralIntake.setDirection(DcMotor.Direction.FORWARD);
+			}
+
 		} else {
+			intakeDirToggle.reset();
+
+			centralIntake.setDirection(DcMotor.Direction.FORWARD);
+
 			centralIntake.setPower(0.0);
 			rightIntake.setPower(0.0);
 			leftIntake.setPower(0.0);
