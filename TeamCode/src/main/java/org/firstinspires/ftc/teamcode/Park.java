@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "Leave/Park Auto", group = "Linear OpMode")
+@Autonomous(name = "Park", group = "Linear OpMode")
 public class Park extends LinearOpMode {
 	private DcMotor leftDrive;
 	private DcMotor rightDrive;
@@ -32,7 +32,7 @@ public class Park extends LinearOpMode {
 			leftDrive.setPower(0.5);
 			rightDrive.setPower(0.5);
 
-			sleep(500); // run for 2000 milliseconds (2 seconds)
+			sleep(200);
 
 			leftDrive.setPower(0);
 			rightDrive.setPower(0);
