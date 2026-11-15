@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
@@ -24,6 +25,7 @@ public class SimpleDrive extends OpMode {
     ToggleAction launchToggle;
 	ToggleAction intakeToggle;
 	ToggleAction intakeDirToggle;
+	FeederController feeder = new FeederController();
 
     @Override
     public void init() {
@@ -83,11 +85,20 @@ public class SimpleDrive extends OpMode {
         leftDrive.setPower(leftPower * driveSpeedMultiplier);
         rightDrive.setPower(rightPower * driveSpeedMultiplier);
 
+        double launchRpm = (launchMotor.getVelocity() / 28) * 60.0;
         if (launchToggle.isActive()) {
+			gamepad1.rumble(1.0, 1.0, Gamepad.RUMBLE_DURATION_CONTINUOUS);
             launchMotor.setPower(launchSpeed);
             // allow time for launch motor to get up to speed
-            if (launchToggle.getStateDuration() >= 2.5) feederServo.setPower(1.0);
+            if (launchToggle.getStateDuration() >= 2.5) {
+                feederServo.setPower(feeder.update(launchRpm));
+            } else {
+                feeder.reset();
+                feederServo.setPower(0.0);
+            }
         } else {
+			gamepad1.stopRumble();
+            feeder.reset();
             launchMotor.setPower(0.0);
             feederServo.setPower(0.0);
         }
@@ -114,10 +125,10 @@ public class SimpleDrive extends OpMode {
 		}
 
         // Display telemetry data
-        double launchRpm = (launchMotor.getVelocity() / 28) * 60.0;
         telemetry.addData("Drive", "Left (%.0f%%), Right (%.0f%%)", leftPower * 100, rightPower * 100);
         telemetry.addData("Intake", "%s, Left (%.0f%%), Central (%.0f%%), Right (%.0f%%)", intakeToggle.isActive() ? "Active" : "Inactive", leftIntake.getPower() * 100, centralIntake.getPower() * 100, rightIntake.getPower() * 100);
         telemetry.addData("Launch Mechanism", "%s, Launch (%.0f rpm), Feed (%.0f%%)", launchToggle.isActive() ? "Active" : "Inactive", launchRpm, feederServo.getPower() * 100);
+        telemetry.addData("Feeder", "%s, Shots %d, Baseline (%.0f rpm)", !launchToggle.isActive() ? "Inactive" : feeder.isPaused() ? "Paused" : "Active", feeder.getShotCount(), feeder.getBaselineRpm());
         telemetry.update();
     }
 }
