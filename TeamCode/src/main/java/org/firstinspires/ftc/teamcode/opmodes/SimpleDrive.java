@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import static org.firstinspires.ftc.teamcode.RobotConfig.*;
+
+import org.firstinspires.ftc.teamcode.subsystems.FeederController;
+import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 
 @TeleOp(name = "Simple Drive", group = "TeleOp")
 public class SimpleDrive extends OpMode {
