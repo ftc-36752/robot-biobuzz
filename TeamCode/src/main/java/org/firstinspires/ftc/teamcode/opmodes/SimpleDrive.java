@@ -12,12 +12,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
 import org.firstinspires.ftc.teamcode.subsystems.FeederController;
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 
 @TeleOp(name = "Simple Drive", group = "TeleOp")
 public class SimpleDrive extends OpMode {
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
+    private Robot robot;
     private DcMotorEx launchMotor;
     private DcMotor centralIntake;
 	private CRServo rightIntake;
@@ -31,8 +31,8 @@ public class SimpleDrive extends OpMode {
 
     @Override
     public void init() {
-        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+		robot = new Robot(hardwareMap);
+
         launchMotor = hardwareMap.get(DcMotorEx.class, "launch");
         centralIntake = hardwareMap.get(DcMotor.class, "intake");
 
@@ -41,16 +41,12 @@ public class SimpleDrive extends OpMode {
         feederServo = hardwareMap.get(CRServo.class, "feeder");
 
         // set rotation directions
-        leftDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
         launchMotor.setDirection(DcMotor.Direction.FORWARD);
         rightIntake.setDirection(DcMotor.Direction.REVERSE);
         leftIntake.setDirection(DcMotor.Direction.FORWARD);
         feederServo.setDirection(CRServo.Direction.REVERSE);
 
         // set zero power behaviour
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         launchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         centralIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -66,27 +62,11 @@ public class SimpleDrive extends OpMode {
 
     @Override
     public void loop() {
+		robot.drivetrain.drive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
+
         launchToggle.update(gamepad1.b);
 		intakeToggle.update(gamepad1.a);
 		intakeDirToggle.update(gamepad1.y);
-
-        double drive = -gamepad1.left_stick_y;
-        double turn = gamepad1.right_stick_x;
-
-        // Calculate power for each side (Arcade Drive math)
-        double leftPower = drive + turn;
-        double rightPower = drive - turn;
-
-        // Normalise powers if they exceed 1.0 to keep steering responsive
-        double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
-        if (max > 1.0) {
-            leftPower /= max;
-            rightPower /= max;
-        }
-
-        // Apply power to the motors
-        leftDrive.setPower(leftPower * driveSpeedMultiplier);
-        rightDrive.setPower(rightPower * driveSpeedMultiplier);
 
         double launchRpm = (launchMotor.getVelocity() / 28) * 60.0;
         if (launchToggle.isActive()) {
@@ -128,7 +108,7 @@ public class SimpleDrive extends OpMode {
 		}
 
         // Display telemetry data
-        telemetry.addData("Drive", "Left (%.0f%%), Right (%.0f%%)", leftPower * 100, rightPower * 100);
+		robot.drivetrain.addTelemetry(telemetry);
         telemetry.addData("Intake", "%s, Left (%.0f%%), Central (%.0f%%), Right (%.0f%%)", intakeToggle.isActive() ? "Active" : "Inactive", leftIntake.getPower() * 100, centralIntake.getPower() * 100, rightIntake.getPower() * 100);
         telemetry.addData("Launch Mechanism", "%s, Launch (%.0f rpm), Feed (%.0f%%)", launchToggle.isActive() ? "Active" : "Inactive", launchRpm, feederServo.getPower() * 100);
         telemetry.addData("Feeder", "%s, Shots %d, Baseline (%.0f rpm)", !launchToggle.isActive() ? "Inactive" : feeder.isPaused() ? "Paused" : "Active", feeder.getShotCount(), feeder.getBaselineRpm());
