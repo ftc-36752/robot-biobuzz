@@ -59,6 +59,7 @@ public class SimpleDrive extends OpMode {
 		intakeDirToggle = new ToggleAction();
 
 		telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+		telemetry.setAutoClear(true);
         telemetry.addData("Status", "Initialized.");
         telemetry.update();
     }
