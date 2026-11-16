@@ -53,8 +53,8 @@ public class Drivetrain {
 		}
 
 		// Apply power to the motors
-		leftDrive.setPower(leftPower * driveSpeedMultiplier);
-		rightDrive.setPower(rightPower * driveSpeedMultiplier);
+		leftDrive.setPower(leftPower);
+		rightDrive.setPower(rightPower);
 	}
 
 	public void addTelemetry(Telemetry telemetry){

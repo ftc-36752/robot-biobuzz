@@ -62,7 +62,7 @@ public class SimpleDrive extends OpMode {
 
     @Override
     public void loop() {
-		robot.drivetrain.drive(-gamepad1.left_stick_y, gamepad1.right_stick_x);
+		robot.drivetrain.drive(-gamepad1.left_stick_y * driveSpeedMultiplier, gamepad1.right_stick_x * driveSpeedMultiplier);
 
         launchToggle.update(gamepad1.b);
 		intakeToggle.update(gamepad1.a);
