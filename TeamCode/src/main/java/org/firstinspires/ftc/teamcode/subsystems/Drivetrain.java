@@ -4,8 +4,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static org.firstinspires.ftc.teamcode.RobotConfig.driveSpeedMultiplier;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -59,5 +58,15 @@ public class Drivetrain {
 
 	public void addTelemetry(Telemetry telemetry){
 		telemetry.addData("Drive", "Left (%.0f%%), Right (%.0f%%)", leftPower * 100, rightPower * 100);
+	}
+
+	public void stop(){
+		drive(0, 0);
+	}
+
+	public void driveFor(double drive, double turn, double seconds, LinearOpMode opMode){
+		drive(drive, turn);
+		opMode.sleep((long) (seconds * 1000));
+		stop();
 	}
 }
