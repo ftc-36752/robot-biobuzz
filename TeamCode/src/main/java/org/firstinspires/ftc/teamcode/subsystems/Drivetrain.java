@@ -32,7 +32,7 @@ public class Drivetrain {
 		rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
 
 		leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-		leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+		rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
