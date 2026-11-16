@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -31,7 +29,8 @@ public class SimpleDrive extends OpMode {
 
     @Override
     public void init() {
-		robot = new Robot(hardwareMap);
+		robot = new Robot(hardwareMap, telemetry);
+		telemetry = robot.telemetry;
 
         launchMotor = hardwareMap.get(DcMotorEx.class, "launch");
         centralIntake = hardwareMap.get(DcMotor.class, "intake");
@@ -54,8 +53,6 @@ public class SimpleDrive extends OpMode {
 		intakeToggle = new ToggleAction();
 		intakeDirToggle = new ToggleAction();
 
-		telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-		telemetry.setAutoClear(true);
         telemetry.addData("Status", "Initialized.");
         telemetry.update();
     }
