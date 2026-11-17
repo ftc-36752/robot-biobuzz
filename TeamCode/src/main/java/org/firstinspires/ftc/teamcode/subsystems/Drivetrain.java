@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@Config
 public class Drivetrain {
 	// Currently unused as we only have two drive motors
 //	public enum Mode {DIFFERENTIAL, HOLONOMIC}
