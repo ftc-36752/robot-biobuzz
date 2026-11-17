@@ -38,7 +38,7 @@ public class Launcher {
 	public static double feederReversePower = 0.5;       // feeder power while running backwards (0-1)
 
 	private enum State {
-		OFF("Off"), SPINNING_UP("Spinning up"), FEEDING("Feeding"), PAUSED("Paused");
+		OFF("Inactive"), SPINNING_UP("Spinning up"), FEEDING("Feeding"), PAUSED("Paused");
 
 		final String label;
 
