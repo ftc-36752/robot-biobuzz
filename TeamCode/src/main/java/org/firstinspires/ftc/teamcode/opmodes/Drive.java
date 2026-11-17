@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 
-@TeleOp(name = "Simple Drive", group = "TeleOp")
-public class SimpleDrive extends OpMode {
+@TeleOp(name = "Drive", group = "TeleOp")
+public class Drive extends OpMode {
 	private Robot robot;
 
 	ToggleAction launchToggle;
