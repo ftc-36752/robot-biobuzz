@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,8 +13,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 /**
  * The launch motor and the feeder (indexer) that pushes balls into it.
  * <p>
- * After the launch motor spins up, the feeder runs and pauses briefly whenever a shot is
- * detected, so the launch motor can recover before the next ball goes in.
+ * The launch motor holds {@code targetRpm} using the hub's velocity PIDF controller, so its
+ * speed doesn't depend on battery charge. Once it is up to speed (or after
+ * {@code spinUpMaxSeconds} at the latest), the feeder runs and pauses briefly whenever a shot
+ * is detected, so the launch motor can recover before the next ball goes in.
  * <p>
  * A shot shows up as a sudden drop in launch motor RPM. The launcher follows the
  * flywheel's normal speed with a slow moving average (the baseline) and treats any
@@ -25,8 +28,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 @Config
 public class Launcher {
-	public static double launchSpeed = 0.5;
-	public static double spinUpSeconds = 2.5;            // time for the launch motor to get up to speed before feeding
+	public static double targetRpm = 2800;
+	public static double atSpeedToleranceRpm = 100;      // counts as up to speed within this of targetRpm
+	public static double spinUpMaxSeconds = 2.5;         // start feeding after this even if not up to speed
+	// velocity controller on the hub; start with f = 32767 / (ticks per second at full power) and tune p
+	public static PIDFCoefficients launchPidf = new PIDFCoefficients(10, 0, 0, 12);
 
 	public static double shotDropRpm = 250;              // drop below baseline that counts as a shot
 	public static double shotRecoveryRpm = 100;          // resume once within this of the baseline
@@ -47,8 +53,11 @@ public class Launcher {
 		}
 	}
 
+	private static final double TICKS_PER_REV = 28;
+
 	private final DcMotorEx launchMotor;
 	private final CRServo feederServo;
+	private final PIDFCoefficients appliedPidf = new PIDFCoefficients();
 
 	private State state = State.OFF;
 	private final ElapsedTime stateTimer = new ElapsedTime();
@@ -64,6 +73,8 @@ public class Launcher {
 		feederServo.setDirection(CRServo.Direction.REVERSE);
 
 		launchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		launchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		applyPidfIfChanged();
 	}
 
 	/** Starts spinning up; the feeder starts once the launch motor is up to speed. Safe to call every loop. */
@@ -80,10 +91,11 @@ public class Launcher {
 
 	/** Call every loop. */
 	public void update() {
-		rpm = (launchMotor.getVelocity() / 28) * 60.0;
+		rpm = launchMotor.getVelocity() / TICKS_PER_REV * 60.0;
 		if (state == State.OFF) return;
 
-		launchMotor.setPower(launchSpeed);
+		applyPidfIfChanged();
+		launchMotor.setVelocity(targetRpm * TICKS_PER_REV / 60.0);
 		feederServo.setPower(feederPower());
 	}
 
@@ -91,8 +103,12 @@ public class Launcher {
 		return state != State.OFF;
 	}
 
+	public boolean isAtSpeed() {
+		return isRunning() && Math.abs(rpm - targetRpm) <= atSpeedToleranceRpm;
+	}
+
 	public void addTelemetry(Telemetry telemetry) {
-		telemetry.addData("Launcher", "%s, Launch (%.0f rpm), Feed (%.0f%%)", state.label, rpm, feederServo.getPower() * 100);
+		telemetry.addData("Launcher", "%s, Launch (%.0f / %.0f rpm), Feed (%.0f%%)", state.label, rpm, targetRpm, feederServo.getPower() * 100);
 		telemetry.addData("Shots", "%d, Baseline (%.0f rpm)", shotCount, baselineRpm);
 	}
 
@@ -100,7 +116,7 @@ public class Launcher {
 		double elapsed = stateTimer.seconds();
 
 		if (state == State.SPINNING_UP) {
-			if (elapsed < spinUpSeconds) return 0.0;
+			if (!isAtSpeed() && elapsed < spinUpMaxSeconds) return 0.0;
 			baselineRpm = rpm;
 			setState(State.FEEDING);
 			return 1.0;
@@ -130,6 +146,18 @@ public class Launcher {
 		}
 		// briefly run backwards to pull the next ball away from the flywheel, then hold still
 		return elapsed < feederReverseSeconds ? -feederReversePower : 0.0;
+	}
+
+	/** Sends launchPidf to the hub when it changed (e.g. in FTC Dashboard), without a hub write every loop. */
+	private void applyPidfIfChanged() {
+		if (launchPidf.p == appliedPidf.p && launchPidf.i == appliedPidf.i
+				&& launchPidf.d == appliedPidf.d && launchPidf.f == appliedPidf.f) return;
+
+		launchMotor.setVelocityPIDFCoefficients(launchPidf.p, launchPidf.i, launchPidf.d, launchPidf.f);
+		appliedPidf.p = launchPidf.p;
+		appliedPidf.i = launchPidf.i;
+		appliedPidf.d = launchPidf.d;
+		appliedPidf.f = launchPidf.f;
 	}
 
 	private void setState(State newState) {
