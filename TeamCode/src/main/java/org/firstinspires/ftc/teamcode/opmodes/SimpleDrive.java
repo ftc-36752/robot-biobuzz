@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 
@@ -47,7 +48,7 @@ public class SimpleDrive extends OpMode {
 		}
 		robot.launcher.update();
 
-		if(intakeToggle.isActive()) robot.intake.run(intakeDirToggle.isActive());
+		if(intakeToggle.isActive()) robot.intake.set(intakeDirToggle.isActive() ? Intake.State.OUT : Intake.State.IN);
 		else {
 			intakeDirToggle.reset();
 			robot.intake.stop();
