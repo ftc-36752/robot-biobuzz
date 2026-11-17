@@ -10,6 +10,7 @@ public class Robot {
 	public final MultipleTelemetry telemetry;
 	public final Drivetrain drivetrain;
 	public final Intake intake;
+	public final Launcher launcher;
 
 	public Robot(HardwareMap hardwareMap, Telemetry telemetry){
 		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -17,5 +18,6 @@ public class Robot {
 
 		this.drivetrain = new Drivetrain(hardwareMap);
 		this.intake = new Intake(hardwareMap);
+		this.launcher = new Launcher(hardwareMap);
 	}
 }
