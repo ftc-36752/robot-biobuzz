@@ -32,7 +32,7 @@ public class Launcher {
 	public static double atSpeedToleranceRpm = 100;      // counts as up to speed within this of targetRpm
 	public static double spinUpMaxSeconds = 2.5;         // start feeding after this even if not up to speed
 	// velocity controller on the hub; start with f = 32767 / (ticks per second at full power) and tune p
-	public static PIDFCoefficients launchPidf = new PIDFCoefficients(10, 0, 0, 12);
+	public static PIDFCoefficients launchPidf = new PIDFCoefficients(10, 0, 0, 12.4);
 
 	public static double shotDropRpm = 250;              // drop below baseline that counts as a shot
 	public static double shotRecoveryRpm = 100;          // resume once within this of the baseline
