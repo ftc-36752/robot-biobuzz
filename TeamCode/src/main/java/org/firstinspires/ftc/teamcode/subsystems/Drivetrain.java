@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-//import com.acmerobotics.dashboard.FtcDashboard;
-import static org.firstinspires.ftc.teamcode.RobotConfig.driveSpeedMultiplier;
-
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,59 +8,101 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Drivetrain {
-	// Currently unused as we only have two drive motors
-//	public enum Mode {DIFFERENTIAL, HOLONOMIC}
-//
-//	public static Mode mode = Mode.DIFFERENTIAL;
-//
-//	public void setDriveMode(Mode mode){
-//		Drivetrain.mode = mode;
-//		FtcDashboard.getInstance().updateConfig();
-//	}
+	public enum Mode {DIFFERENTIAL, HOLONOMIC}
 
-	private final DcMotor leftDrive;
-	private final DcMotor rightDrive;
+	private Mode mode = Mode.HOLONOMIC;
 
-	public Drivetrain(HardwareMap hardwareMap) {
-		leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
-		rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+	private final DcMotor flDrive;
+	private final DcMotor frDrive;
+	private final DcMotor blDrive;
+	private final DcMotor brDrive;
 
-		leftDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-		rightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+	private double flPower;
+	private double frPower;
+	private double blPower;
+	private double brPower;
 
-		leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+	public Drivetrain(HardwareMap hardwareMap){
+		flDrive = hardwareMap.get(DcMotor.class, "fl_drive");
+		frDrive = hardwareMap.get(DcMotor.class, "fr_drive");
+		blDrive = hardwareMap.get(DcMotor.class, "bl_drive");
+		brDrive = hardwareMap.get(DcMotor.class, "br_drive");
+
+		flDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		frDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		blDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		brDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+
+		flDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		frDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		blDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		brDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 	}
 
-	private double leftPower;
-	private double rightPower;
-	public void drive(double drive, double turn){
-		// Calculate power for each side
-		leftPower = drive + turn;
-		rightPower = drive - turn;
+	public void setDriveMode(Mode newMode){
+		mode = newMode;
+	}
 
-		// Normalise powers if they exceed 1.0
-		double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
-		if (max > 1.0) {
-			leftPower /= max;
-			rightPower /= max;
+	public void drive(double drive, double strafe, double turn){
+		if(mode == Mode.DIFFERENTIAL){
+			differentialDrive(drive, turn);
+		} else {
+			holonomicDrive(drive, strafe, turn);
+		}
+	}
+
+	private void differentialDrive(double drive, double turn){
+		flPower = drive + turn;
+		blPower = drive + turn;
+
+		frPower = drive - turn;
+		brPower = drive - turn;
+
+		applyPower();
+	}
+
+	private void holonomicDrive(double drive, double strafe, double turn){
+		flPower = drive + strafe + turn;
+		frPower = drive - strafe - turn;
+		blPower = drive - strafe + turn;
+		brPower = drive + strafe - turn;
+
+		applyPower();
+	}
+
+	private void applyPower(){
+		double max = 1.0;
+		for(double power : new double[]{
+				flPower, frPower, blPower, brPower
+		}){
+			max = Math.max(max, Math.abs(power));
 		}
 
-		// Apply power to the motors
-		leftDrive.setPower(leftPower);
-		rightDrive.setPower(rightPower);
+		flPower /= max;
+		frPower /= max;
+		blPower /= max;
+		brPower /= max;
+
+		flDrive.setPower(flPower);
+		frDrive.setPower(frPower);
+		blDrive.setPower(blPower);
+		brDrive.setPower(brPower);
 	}
 
 	public void addTelemetry(Telemetry telemetry){
-		telemetry.addData("Drive", "Left (%.0f%%), Right (%.0f%%)", leftPower * 100, rightPower * 100);
+		telemetry.addData("Drive Mode", mode);
+		telemetry.addData("Front Left", "%.0f%%", flPower * 100);
+		telemetry.addData("Front Right", "%.0f%%", frPower * 100);
+		telemetry.addData("Back Left", "%.0f%%", blPower * 100);
+		telemetry.addData("Back Right", "%.0f%%", brPower * 100);
 	}
 
 	public void stop(){
-		drive(0, 0);
+		drive(0, 0, 0);
 	}
 
-	public void driveFor(double drive, double turn, double seconds, LinearOpMode opMode){
-		drive(drive, turn);
+	public void driveFor(double drive, double strafe, double turn, double seconds, LinearOpMode opMode){
+		drive(drive, strafe, turn);
 		opMode.sleep((long) (seconds * 1000));
 		stop();
 	}

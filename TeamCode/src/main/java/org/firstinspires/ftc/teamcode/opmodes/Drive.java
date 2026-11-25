@@ -41,7 +41,7 @@ public class Drive extends OpMode {
 
 	@Override
 	public void loop(){
-		robot.drivetrain.drive(-gamepad1.left_stick_y * driveSpeedMultiplier, gamepad1.right_stick_x * driveSpeedMultiplier);
+		robot.drivetrain.drive(-gamepad1.left_stick_y * driveSpeedMultiplier, gamepad1.left_stick_x * driveSpeedMultiplier, gamepad1.right_stick_x * driveSpeedMultiplier);
 
 		launchToggle.update(gamepad1.b);
 		intakeToggle.update(gamepad1.a);
@@ -64,9 +64,15 @@ public class Drive extends OpMode {
 		}
 
 		// Display telemetry data
+		telemetry.addLine();
 		robot.drivetrain.addTelemetry(telemetry);
 		robot.intake.addTelemetry(telemetry);
 		robot.launcher.addTelemetry(telemetry);
 		telemetry.update();
+	}
+
+	@Override
+	public void stop(){
+		robot.drivetrain.stop();
 	}
 }
