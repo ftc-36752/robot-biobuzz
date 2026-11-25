@@ -15,7 +15,6 @@ public class Robot {
 	public Robot(HardwareMap hardwareMap, Telemetry telemetry){
 		telemetry.setAutoClear(true);
 		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-		this.telemetry.setAutoClear(true);
 
 		this.drivetrain = new Drivetrain(hardwareMap);
 		this.intake = new Intake(hardwareMap);
