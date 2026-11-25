@@ -28,9 +28,9 @@ public class Drivetrain {
 		blDrive = hardwareMap.get(DcMotor.class, "bl_drive");
 		brDrive = hardwareMap.get(DcMotor.class, "br_drive");
 
-		flDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		flDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 		frDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-		blDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+		blDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 		brDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
 		flDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
