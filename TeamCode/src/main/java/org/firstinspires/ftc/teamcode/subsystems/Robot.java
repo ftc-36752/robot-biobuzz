@@ -13,6 +13,7 @@ public class Robot {
 	public final Launcher launcher;
 
 	public Robot(HardwareMap hardwareMap, Telemetry telemetry){
+		telemetry.setAutoClear(true);
 		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 		this.telemetry.setAutoClear(true);
 
