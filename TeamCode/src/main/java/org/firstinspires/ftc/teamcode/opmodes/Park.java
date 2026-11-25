@@ -20,7 +20,7 @@ public class Park extends LinearOpMode {
 		waitForStart();
 
 		if(opModeIsActive()){
-			robot.drivetrain.driveFor(0.5, 0, 0.2, this);
+			robot.drivetrain.driveFor(0.5, 0, 0, 0.2, this);
 		}
 	}
 }
