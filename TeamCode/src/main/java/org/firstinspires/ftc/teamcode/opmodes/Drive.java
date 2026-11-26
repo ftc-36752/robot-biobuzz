@@ -79,7 +79,9 @@ public class Drive extends OpMode {
 		Alliance.addTelemetry(telemetry);
 		telemetry.addLine();
 		robot.drivetrain.addTelemetry(telemetry);
+		telemetry.addLine();
 		robot.intake.addTelemetry(telemetry);
+		telemetry.addLine();
 		robot.launcher.addTelemetry(telemetry);
 		telemetry.update();
 	}
