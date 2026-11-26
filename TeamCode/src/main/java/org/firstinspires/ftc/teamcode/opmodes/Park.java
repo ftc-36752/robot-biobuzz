@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@Autonomous(name = "Park", group = "Linear OpMode")
+@Autonomous(name = "Park", group = "Linear OpMode", preselectTeleOp = "Drive")
 public class Park extends LinearOpMode {
 	private Robot robot;
 
