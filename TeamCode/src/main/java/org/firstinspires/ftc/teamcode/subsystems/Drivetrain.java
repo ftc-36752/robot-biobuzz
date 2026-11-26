@@ -91,10 +91,7 @@ public class Drivetrain {
 
 	public void addTelemetry(Telemetry telemetry){
 		telemetry.addData("Drive Mode", mode);
-		telemetry.addData("Front Left", "%.0f%%", flPower * 100);
-		telemetry.addData("Front Right", "%.0f%%", frPower * 100);
-		telemetry.addData("Back Left", "%.0f%%", blPower * 100);
-		telemetry.addData("Back Right", "%.0f%%", brPower * 100);
+		telemetry.addData("Motor Power", "FL (%.0f%%), FR (%.0f%%), BL (%.0f%%), BR (%.0f%%)", flPower * 100, frPower * 100, blPower * 100, brPower * 100);
 	}
 
 	public void stop(){
