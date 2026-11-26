@@ -61,7 +61,7 @@ public class Drive extends OpMode {
 
 		if(launchToggle.isActive()){
 			robot.launcher.start();
-			if(!wasLaunchActive) gamepad1.runRumbleEffect(pulseEffect);
+			if (!gamepad1.isRumbling()) gamepad1.runRumbleEffect(pulseEffect);
 		} else {
 			robot.launcher.stop();
 			if(wasLaunchActive) gamepad1.stopRumble();
