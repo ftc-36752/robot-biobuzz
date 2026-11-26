@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.utils.Alliance;
 import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 
 @TeleOp(name = "Drive", group = "TeleOp")
@@ -40,8 +41,19 @@ public class Drive extends OpMode {
 	}
 
 	@Override
+	public void init_loop(){
+		Alliance.updateFromGamepad(gamepad1, telemetry);
+		telemetry.update();
+	}
+
+	@Override
 	public void loop(){
-		robot.drivetrain.drive(-gamepad1.left_stick_y * driveSpeedMultiplier, gamepad1.left_stick_x * driveSpeedMultiplier, gamepad1.right_stick_x * driveSpeedMultiplier);
+		double strafe = gamepad1.left_stick_x * driveSpeedMultiplier;
+		if (Math.abs(gamepad1.left_stick_x) < 0.5) {
+			strafe = 0;
+		}
+
+		robot.drivetrain.drive(-gamepad1.left_stick_y * driveSpeedMultiplier, strafe, gamepad1.right_stick_x * driveSpeedMultiplier);
 
 		launchToggle.update(gamepad1.b);
 		intakeToggle.update(gamepad1.a);
@@ -64,6 +76,7 @@ public class Drive extends OpMode {
 		}
 
 		// Display telemetry data
+		Alliance.addTelemetry(telemetry);
 		telemetry.addLine();
 		robot.drivetrain.addTelemetry(telemetry);
 		robot.intake.addTelemetry(telemetry);
