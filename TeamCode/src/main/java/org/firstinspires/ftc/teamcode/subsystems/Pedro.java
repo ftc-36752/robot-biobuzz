@@ -27,7 +27,7 @@ public class Pedro {
 	public void addTelemetry(Telemetry telemetry) {
 		Pose pose = follower.pose();
 
-		telemetry.addLine("--- PEDRO ---");
+		telemetry.addLine("=== PEDRO ===");
 
 		telemetry.addData("Mode", follower.mode());
 		telemetry.addData("Following", follower.following());
