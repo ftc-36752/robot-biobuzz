@@ -15,6 +15,7 @@ public class Robot {
 	public final Intake intake;
 	public final Launcher launcher;
 	public final Vision vision;
+	public final AimController aimController;
 
 	public Robot(HardwareMap hardwareMap, Telemetry telemetry){
 		telemetry.setAutoClear(true);
@@ -24,5 +25,6 @@ public class Robot {
 		this.intake = new Intake(hardwareMap);
 		this.launcher = new Launcher(hardwareMap);
 		this.vision = new Vision(hardwareMap);
+		this.aimController = new AimController(launcher);
 	}
 }
