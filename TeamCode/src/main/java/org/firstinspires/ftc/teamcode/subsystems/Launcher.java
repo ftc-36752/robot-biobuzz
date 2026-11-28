@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -75,6 +76,15 @@ public class Launcher {
 		launchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		launchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		applyPidfIfChanged();
+	}
+
+	public void setTargetRpm(double newTarget){
+		targetRpm = newTarget;
+		FtcDashboard.getInstance().updateConfig();
+	}
+
+	public double getTargetRpm(){
+		return targetRpm;
 	}
 
 	/** Starts spinning up; the feeder starts once the launch motor is up to speed. Safe to call every loop. */
