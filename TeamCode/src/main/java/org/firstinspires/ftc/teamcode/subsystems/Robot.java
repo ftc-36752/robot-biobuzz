@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 public class Robot {
 	public final MultipleTelemetry telemetry;
 
-	public final Follower follower;
+	public final Pedro pedro;
 	public final Intake intake;
 	public final Launcher launcher;
 	public final Vision vision;
@@ -20,7 +20,7 @@ public class Robot {
 		telemetry.setAutoClear(true);
 		this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-		this.follower = Constants.create(hardwareMap);
+		this.pedro = new Pedro(hardwareMap);
 		this.intake = new Intake(hardwareMap);
 		this.launcher = new Launcher(hardwareMap);
 		this.vision = new Vision(hardwareMap);

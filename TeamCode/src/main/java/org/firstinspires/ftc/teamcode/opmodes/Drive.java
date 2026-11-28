@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.drivetrain.DrivePowers;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
 
 import com.pedropathing.math.Pose;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
@@ -20,6 +22,7 @@ import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 @TeleOp(name = "Drive", group = "1TeleOp")
 public class Drive extends OpMode {
 	private Robot robot;
+	private Follower follower;
 
 	private ToggleAction launchToggle;
 	private ToggleAction intakeToggle;
@@ -30,9 +33,10 @@ public class Drive extends OpMode {
 	@Override
 	public void init(){
 		robot = new Robot(hardwareMap, telemetry);
+		follower = robot.pedro.follower;
 		telemetry = robot.telemetry;
 
-		robot.follower.setPose(
+		follower.setPose(
 				PoseFactory.radians().of(0, 0, 0)
 		);
 
@@ -52,16 +56,16 @@ public class Drive extends OpMode {
 	@Override
 	public void init_loop(){
 		Alliance.updateFromGamepad(gamepad1, telemetry);
-		robot.follower.update();
+		robot.pedro.update();
 
 		telemetry.addLine("=== PEDRO ===");
-		telemetry.addData("Mode", robot.follower.mode());
-		telemetry.addData("X", "%.2f", robot.follower.pose().x());
-		telemetry.addData("Y", "%.2f", robot.follower.pose().y());
+		telemetry.addData("Mode", follower.mode());
+		telemetry.addData("X", "%.2f", follower.pose().x());
+		telemetry.addData("Y", "%.2f", follower.pose().y());
 		telemetry.addData(
 				"Heading",
 				"%.2f deg",
-				Math.toDegrees(robot.follower.pose().heading())
+				Math.toDegrees(follower.pose().heading())
 		);
 		telemetry.update();
 	}
@@ -81,10 +85,10 @@ public class Drive extends OpMode {
 				forward * driveSpeedMultiplier,
 				strafe * driveSpeedMultiplier,
 				turn * driveSpeedMultiplier,
-				robot.follower.pose().heading()
+				follower.pose().heading()
 		);
-		ManualDrive.driveOrHold(robot.follower, powers);
-		robot.follower.update();
+		ManualDrive.driveOrHold(follower, powers);
+		follower.update();
 
 		// --------------- //
 		//   Toggleables   //
@@ -117,8 +121,8 @@ public class Drive extends OpMode {
 		//    Pressables    //
 		// ---------------- //
 		if (gamepad1.backWasPressed()) {
-			Pose currentPose = robot.follower.pose();
-			robot.follower.setPose(
+			Pose currentPose = follower.pose();
+			follower.setPose(
 					PoseFactory.radians().of(
 							currentPose.x(),
 							currentPose.y(),
@@ -132,15 +136,8 @@ public class Drive extends OpMode {
 		// --------------- //
 		Alliance.addTelemetry(telemetry);
 
-		telemetry.addLine("--- PEDRO ---");
-		telemetry.addData("Mode", robot.follower.mode());
-		telemetry.addData("X", "%.2f", robot.follower.pose().x());
-		telemetry.addData("Y", "%.2f", robot.follower.pose().y());
-		telemetry.addData(
-				"Heading",
-				"%.2f deg",
-				Math.toDegrees(robot.follower.pose().heading())
-		);
+		telemetry.addLine();
+		robot.pedro.addTelemetry(telemetry);
 
 		telemetry.addLine();
 		robot.intake.addTelemetry(telemetry);
@@ -156,7 +153,7 @@ public class Drive extends OpMode {
 
 	@Override
 	public void stop(){
-		robot.follower.stop();
+		robot.pedro.stop();
 		robot.launcher.stop();
 		robot.intake.stop();
 		robot.vision.close();
