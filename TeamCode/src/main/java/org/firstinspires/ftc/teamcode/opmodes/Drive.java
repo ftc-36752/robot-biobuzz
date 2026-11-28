@@ -58,15 +58,8 @@ public class Drive extends OpMode {
 		Alliance.updateFromGamepad(gamepad1, telemetry);
 		robot.pedro.update();
 
-		telemetry.addLine("=== PEDRO ===");
-		telemetry.addData("Mode", follower.mode());
-		telemetry.addData("X", "%.2f", follower.pose().x());
-		telemetry.addData("Y", "%.2f", follower.pose().y());
-		telemetry.addData(
-				"Heading",
-				"%.2f deg",
-				Math.toDegrees(follower.pose().heading())
-		);
+		telemetry.addLine();
+		robot.pedro.addTelemetry(telemetry);
 		telemetry.update();
 	}
 
