@@ -20,7 +20,7 @@ public class Park extends LinearOpMode {
 		robot = new Robot(hardwareMap, telemetry);
 		telemetry = robot.telemetry;
 
-		Follower follower = robot.follower;
+		Follower follower = robot.pedro.follower;
 		PoseFactory p = PoseFactory.radians();
 
 		telemetry.addData("Status", "Initialized");
