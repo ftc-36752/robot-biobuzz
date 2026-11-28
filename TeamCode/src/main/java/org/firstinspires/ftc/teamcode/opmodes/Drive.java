@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
-import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
@@ -74,12 +73,18 @@ public class Drive extends OpMode {
 		double strafe = -gamepad1.left_stick_x;
 		double turn = -gamepad1.right_stick_x;
 
+		if(tagData != null){
+			robot.aimController.update(tagData.range);
+			if(gamepad1.right_bumper) turn = robot.aimController.calculateTurn(tagData.bearing);
+		}
+
 		DrivePowers powers = ManualDrive.fieldCentric(
 				forward * driveSpeedMultiplier,
 				strafe * driveSpeedMultiplier,
 				turn * driveSpeedMultiplier,
 				follower.pose().heading()
 		);
+
 		ManualDrive.driveOrHold(follower, powers);
 		follower.update();
 
