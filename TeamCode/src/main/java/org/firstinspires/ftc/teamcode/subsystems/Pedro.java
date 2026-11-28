@@ -69,7 +69,7 @@ public class Pedro {
 		telemetry.addLine();
 		telemetry.addLine("=== DRIVETRAIN ===");
 		telemetry.addData("Motors",
-				"FL (%.0f%), FR (%.0f%), BL (%.0f%), BR (%.0f%)",
+				"FL (%.0f%%), FR (%.0f%%), BL (%.0f%%), BR (%.0f%%)",
 				fl.getPower() * 100,
 				fr.getPower() * 100,
 				bl.getPower() * 100,
