@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.RobotConfig.*;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import org.firstinspires.ftc.teamcode.utils.Alliance;
 import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 
@@ -48,11 +49,12 @@ public class Drive extends OpMode {
 
 	@Override
 	public void loop(){
+		Vision.TagData tagData = robot.vision.detect();
+
 		double strafe = gamepad1.left_stick_x * driveSpeedMultiplier;
 		if (Math.abs(gamepad1.left_stick_x) < 0.5) {
 			strafe = 0;
 		}
-
 		robot.drivetrain.drive(-gamepad1.left_stick_y * driveSpeedMultiplier, strafe, gamepad1.right_stick_x * driveSpeedMultiplier);
 
 		launchToggle.update(gamepad1.b);
@@ -83,6 +85,8 @@ public class Drive extends OpMode {
 		robot.intake.addTelemetry(telemetry);
 		telemetry.addLine();
 		robot.launcher.addTelemetry(telemetry);
+		telemetry.addLine();
+		robot.vision.addTelemetry(telemetry);
 		telemetry.update();
 	}
 
