@@ -21,7 +21,6 @@ public class Drive extends OpMode {
 	ToggleAction intakeDirToggle;
 
 	private Gamepad.RumbleEffect pulseEffect;
-	private boolean wasLaunchActive = false;
 
 	@Override
 	public void init(){
@@ -66,9 +65,8 @@ public class Drive extends OpMode {
 			if (!gamepad1.isRumbling()) gamepad1.runRumbleEffect(pulseEffect);
 		} else {
 			robot.launcher.stop();
-			if(wasLaunchActive) gamepad1.stopRumble();
+			if(launchToggle.wasActive()) gamepad1.stopRumble();
 		}
-		wasLaunchActive = launchToggle.isActive();
 		robot.launcher.update();
 
 		if(intakeToggle.isActive()) robot.intake.set(intakeDirToggle.isActive() ? Intake.State.OUT : Intake.State.IN);
