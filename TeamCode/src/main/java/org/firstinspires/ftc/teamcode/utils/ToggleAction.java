@@ -5,27 +5,27 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ToggleAction {
     private boolean active = false;
 	private boolean previousActive = false;
-    private boolean previousButtonState = false;
+    private boolean previousInput = false;
     private final ElapsedTime actionTimer = new ElapsedTime();
 
     /**
      * Call this every frame.
      *
-     * @param currentButtonState Raw gamepad button boolean (e.g. gamepad1.x)
+     * @param currentInput Raw input boolean (e.g. gamepad1.x)
      */
-    public void update(boolean currentButtonState) {
+    public void update(boolean currentInput) {
 		previousActive = active;
-        if (currentButtonState && !previousButtonState) {
+        if (currentInput && !previousInput) {
             active = !active;
             actionTimer.reset(); // Automatically resets timer on state change
         }
-        previousButtonState = currentButtonState;
+        previousInput = currentInput;
     }
 
 	public void reset() {
 		active = false;
 		previousActive = false;
-		previousButtonState = false;
+		previousInput = false;
 		actionTimer.reset();
 	}
 
