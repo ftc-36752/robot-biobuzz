@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import org.firstinspires.ftc.teamcode.utils.Alliance;
 import org.firstinspires.ftc.teamcode.utils.ToggleAction;
 
-@TeleOp(name = "Drive", group = "TeleOp")
+@TeleOp(name = "Drive", group = "1TeleOp")
 public class Drive extends OpMode {
 	private Robot robot;
 

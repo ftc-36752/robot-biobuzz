@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
-@TeleOp(name = "Pinpoint Test", group = "Test")
+@TeleOp(name = "Pinpoint Test", group = "2Test")
 public class PinpointTest extends OpMode {
 	GoBildaPinpointDriver pinpoint;
 
